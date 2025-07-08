@@ -1,12 +1,7 @@
 // app/api/projects/[id]/route.ts
 import { NextResponse } from "next/server";
-
-import {
-  deleteCarouselPhoto,
-  getCarouselPhoto,
-  updateCarouselPhoto,
-} from "../actions";
-import { CarousePhotos } from "@/app/lib/definitions";
+import { Categories } from "@/app/lib/definitions";
+import { deleteCategories, getCategories, updateCategories } from "../actions";
 
 export async function GET(
   request: Request,
@@ -20,18 +15,21 @@ export async function GET(
       );
     }
 
-    const photo = await getCarouselPhoto(params.id);
+    const categories = await getCategories(params.id);
 
-    if (!photo) {
-      return NextResponse.json({ error: "Photo not found" }, { status: 404 });
+    if (!categories) {
+      return NextResponse.json(
+        { error: "Categories not found" },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json(photo, {
+    return NextResponse.json(categories, {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("GET Photo Error:", error);
+    console.error("GET categories Error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
@@ -46,12 +44,12 @@ export async function PUT(
   try {
     if (!params.id) {
       return NextResponse.json(
-        { error: "Photo ID is required" },
+        { error: "Categories ID is required" },
         { status: 400 }
       );
     }
 
-    const data: CarousePhotos = await request.json();
+    const data: Categories = await request.json();
 
     // Базовая валидация данных
     if (!data || Object.keys(data).length === 0) {
@@ -61,13 +59,13 @@ export async function PUT(
       );
     }
 
-    const updatedPhoto = await updateCarouselPhoto(params.id, data);
-    return NextResponse.json(updatedPhoto, {
+    const updatedCategories = await updateCategories(params.id, data);
+    return NextResponse.json(updatedCategories, {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("UPDATE Photo Error:", error);
+    console.error("UPDATE categories Error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
@@ -87,7 +85,7 @@ export async function DELETE(
       );
     }
 
-    await deleteCarouselPhoto(params.id);
+    await deleteCategories(params.id);
     return NextResponse.json(
       { success: true },
       {

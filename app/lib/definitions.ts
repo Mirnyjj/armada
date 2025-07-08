@@ -99,17 +99,27 @@ export type TechniqueType = {
   boom_reach: number;
   side_length: number;
   price: number;
+  id_categories: string;
 };
 export type CarousePhotos = {
   id: string;
   photo_path: string;
   display_order: number;
+  title: string;
+  description: string;
 };
 
 export type CompletedProjects = {
   id: string;
   title: string;
   address: string;
+  description: string;
+  photo_path: string;
+};
+export type Categories = {
+  id: string;
+  title: string;
+  name: string;
   description: string;
   photo_path: string;
 };

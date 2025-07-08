@@ -1,36 +1,33 @@
 import { CarousePhotos } from "@/app/lib/definitions";
 import { sql } from "@/app/lib/utils";
+import { NextResponse } from "next/server";
 
-export async function getCarouselPhoto(id: string) {
+export async function GET() {
   try {
-    const [photo] = await sql<
-      CarousePhotos[]
-    >`SELECT * FROM carousel_photos WHERE id = ${id}`;
-    return photo;
+    const data = await sql<CarousePhotos[]>`SELECT * FROM carousel_photos`;
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Database Error:", error);
-    throw new Error("Failed to fetch photo.");
+    throw new Error("Failed to fetch revenue data.");
   }
 }
 
-export async function createCarouselPhoto(
-  photo: Omit<CarousePhotos, "id" | "display_order">
-) {
+export async function POST(photo: Omit<CarousePhotos, "id" | "display_order">) {
   try {
     // Сначала получаем максимальный текущий display_order
     const maxOrderResult = await sql<{ max: number }[]>`
-          SELECT MAX(display_order) as max FROM carousel_photos
-        `;
+            SELECT MAX(display_order) as max FROM carousel_photos
+          `;
 
     // Вычисляем следующий порядковый номер
     const nextDisplayOrder = (maxOrderResult[0]?.max || 0) + 1;
 
     // Создаём новую запись с автоматическим display_order
     const [newPhoto] = await sql<CarousePhotos[]>`
-          INSERT INTO carousel_photos (photo_path, display_order, title, description)
-          VALUES (${photo.photo_path}, ${nextDisplayOrder}, ${photo.title}, ${photo.description})
-          RETURNING *
-        `;
+            INSERT INTO carousel_photos (photo_path, display_order, title, description)
+            VALUES (${photo.photo_path}, ${nextDisplayOrder}, ${photo.title}, ${photo.description})
+            RETURNING *
+          `;
 
     return newPhoto;
   } catch (error) {
@@ -39,7 +36,7 @@ export async function createCarouselPhoto(
   }
 }
 
-export async function updateCarouselPhoto(id: string, photo: CarousePhotos) {
+export async function PUT(id: string, photo: CarousePhotos) {
   try {
     const [updatedPhoto] = await sql<
       CarousePhotos[]
@@ -48,15 +45,5 @@ export async function updateCarouselPhoto(id: string, photo: CarousePhotos) {
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to update photo.");
-  }
-}
-
-export async function deleteCarouselPhoto(id: string) {
-  try {
-    await sql`DELETE FROM carousel_photos WHERE id = ${id}`;
-    return { id };
-  } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to delete photo.");
   }
 }

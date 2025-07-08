@@ -21,7 +21,7 @@ async function getPhotoClient(id: string) {
   return res.json();
 }
 
-export const useProjectHooks = () => {
+export const usePhotoHooks = () => {
   const hooks = createEntityHooks<
     CarousePhotos,
     Omit<CarousePhotos, "id">,
