@@ -40,7 +40,7 @@ export const Header = () => {
             этаж 9, пом. 14, оф. 914/2.
           </span>
         </a>
-        <Button className="rounded-none border-2 border-[yellow] text-white">
+        <Button className="rounded-none px-4 border-2 border-[yellow] text-white hover:bg-yellow-400 duration-300 ease-in-out">
           Свяжитесь с нами
         </Button>
         <div className="flex flex-row gap-2 justify-center items-center">

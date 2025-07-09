@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-fuul">
+    <html lang="en" className="h-fuul w-full">
       <body
         className={`${inter.className} antialiased flex min-h-screen flex-col items-center min-w-full bg-[#f1f1f1]`}
       >

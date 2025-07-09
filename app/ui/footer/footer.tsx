@@ -53,7 +53,7 @@ export const Footer = () => {
             ))}
           </nav>
         </div>
-        <Button className="rounded-none border-2 border-[yellow] text-white">
+        <Button className="rounded-none border-2 border-[yellow] text-white px-4">
           Оставить заявку
         </Button>
         <div className="flex flex-col gap-3 justify-start">

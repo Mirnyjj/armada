@@ -19,16 +19,31 @@ input[type="number"]::-webkit-outer-spin-button {
 body {
   overflow-x: hidden;
 }
-@keyframes fadeIn {
+@keyframes fadeInTop {
   from {
-    margin-top: 50;
+    transform: translateY(-500px);
     opacity: 0;
   }
   to {
+    transform: translateY(0);
     opacity: 1;
   }
 }
 
-.animate-fadeIn {
-  animation: fadeIn 1.5s ease-in-out;
+@keyframes fadeInRight {
+  from {
+    transform: translateX(200px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-fadeInRight {
+  animation: fadeInRight 1.5s ease-in-out forwards;
+}
+.animate-fadeInTop {
+  animation: fadeInTop 1.5s ease-in-out forwards;
 }
