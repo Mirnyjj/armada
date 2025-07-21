@@ -68,6 +68,7 @@ export async function fetchTechnique(
     "side_length",
     "price",
     "id_categories",
+    "shaft_width",
   ];
 
   try {

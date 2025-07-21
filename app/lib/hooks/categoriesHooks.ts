@@ -1,5 +1,4 @@
 // lib/hooks/projectHooks.ts
-"use client";
 
 import { Categories } from "../definitions";
 import { createEntityHooks } from "./entityHooks";

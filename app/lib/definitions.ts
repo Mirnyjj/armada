@@ -89,7 +89,7 @@ export type InvoiceForm = {
 
 export type TechniqueType = {
   id: string;
-  img: string;
+  photo_path: string;
   title: string;
   bucket_volume: number;
   max_depth: number;
@@ -100,6 +100,7 @@ export type TechniqueType = {
   side_length: number;
   price: number;
   id_categories: string;
+  shaft_width: number;
 };
 export type CarousePhotos = {
   id: string;
@@ -127,4 +128,12 @@ export type Categories = {
 export type ApiResponse<T> = {
   data?: T;
   error?: string;
+};
+
+export type FormDataType = {
+  technique: string;
+  name: string;
+  email: string;
+  telephone: string;
+  message: string;
 };

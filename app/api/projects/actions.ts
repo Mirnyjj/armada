@@ -1,6 +1,6 @@
+import { CompletedProjects } from "@/app/lib/definitions";
+import { sql } from "@/app/lib/utils";
 import { revalidatePath } from "next/cache";
-import { CompletedProjects } from "../../definitions";
-import { sql } from "../../utils";
 
 export async function createProject(project: Omit<CompletedProjects, "id">) {
   try {

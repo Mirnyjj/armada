@@ -1,7 +1,6 @@
 import "@/app/ui/global.css";
 import { inter } from "@/app/ui/fonts";
 import { Metadata } from "next";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Providers from "./Provider";
 import { lusitana } from "@/app/ui/fonts";
 import { Header } from "./ui/header/header";
@@ -10,11 +9,10 @@ import { Footer } from "./ui/footer/footer";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Acme Dashboard",
-    default: "Acme Dashboard",
+    template: "%s | Аренда техники",
+    default: "Аренда техники",
   },
-  description: "The official Next.js Learn Dashboard built with App Router.",
-  metadataBase: new URL("https://next-learn-dashboard.vercel.sh"),
+  description: "Аренда техники в Москве и Московской области",
 };
 export default function RootLayout({
   children,
