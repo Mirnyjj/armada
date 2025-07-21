@@ -12,14 +12,14 @@ export const Footer = () => {
     >
       <div className="w-full max-w-[1280px] flex flex-col lg:flex-row flex-wrap justify-between items-center lg:items-start gap-8 lg:gap-0">
         <div className="flex flex-col gap-3 items-center lg:items-start justify-center w-full lg:w-auto">
-          <div>
+          <Link href="/">
             <Image
               src={logo}
               alt="Logo company Armada-holding picture"
               width={160}
               height={40}
             />
-          </div>
+          </Link>
           <span className="font-light text-xs text-[#FFFFFF] max-w-60 text-center lg:text-left">
             Аренда спецтехники: экскаваторы, манипуляторы, газели "Фермер" для
             бизнеса и виброплиты.

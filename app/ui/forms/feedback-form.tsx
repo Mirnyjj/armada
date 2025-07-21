@@ -1,4 +1,4 @@
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Button } from "../button/button";
 import { Input } from "../input/input";
 import { submittingForm } from "@/app/lib/actions";
@@ -23,10 +23,22 @@ export const FeedbackForm = ({
   onClose,
   technique,
 }: FeedbackFormProps) => {
-  const [errorMessage, formAction, isPending] = useActionState(
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [state, formAction, isPending] = useActionState(
     submittingForm,
     undefined
   );
+
+  useEffect(() => {
+    if (state?.message?.includes("успешно")) {
+      setShowSuccess(true);
+      const timer = setTimeout(() => {
+        setShowSuccess(false);
+        if (onClose) onClose(); // Закрываем форму через 3 секунды
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [state, onClose]);
 
   if (!isOpen && technique.length === 0) return null;
 
@@ -72,9 +84,9 @@ export const FeedbackForm = ({
                 </label>
                 <div className="relative">
                   <Select items={technique} />
-                  {errorMessage?.errors?.technique && (
+                  {state?.errors?.technique && (
                     <p className="mt-1 text-xs text-red-600">
-                      {errorMessage.errors.technique}
+                      {state.errors.technique}
                     </p>
                   )}
                 </div>
@@ -96,9 +108,9 @@ export const FeedbackForm = ({
                     placeholder="Как к Вам обращаться?"
                     iconSerach={false}
                   />
-                  {errorMessage?.errors?.name && (
+                  {state?.errors?.name && (
                     <p className="mt-1 text-xs text-red-600">
-                      {errorMessage.errors.name}
+                      {state.errors.name}
                     </p>
                   )}
                 </div>
@@ -119,9 +131,9 @@ export const FeedbackForm = ({
                     placeholder="+7 (___) ___-__-__"
                     iconSerach={false}
                   />
-                  {errorMessage?.errors?.telephone && (
+                  {state?.errors?.telephone && (
                     <p className="mt-1 text-xs text-red-600">
-                      {errorMessage.errors.telephone}
+                      {state.errors.telephone}
                     </p>
                   )}
                 </div>
@@ -140,9 +152,9 @@ export const FeedbackForm = ({
                     type="email"
                     placeholder="Укажите Вашу электронную почту"
                   />
-                  {errorMessage?.errors?.email && (
+                  {state?.errors?.email && (
                     <p className="mt-1 text-xs text-red-600">
-                      {errorMessage.errors.email}
+                      {state.errors.email}
                     </p>
                   )}
                 </div>
@@ -164,9 +176,9 @@ export const FeedbackForm = ({
                     className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm placeholder-gray-400 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 transition-all resize-none"
                     placeholder="Задайте ваши вопросы по аренде техники..."
                   />
-                  {errorMessage?.errors?.message && (
+                  {state?.errors?.message && (
                     <p className="mt-1 text-xs text-red-600">
-                      {errorMessage.errors.message}
+                      {state.errors.message}
                     </p>
                   )}
                 </div>
@@ -189,15 +201,15 @@ export const FeedbackForm = ({
                 </Button>
               </div>
 
-              {errorMessage?.message && (
+              {state?.message && (
                 <div
                   className={`mt-4 rounded-lg p-3 text-sm ${
-                    errorMessage.message.includes("успешно")
+                    state.message.includes("успешно")
                       ? "bg-green-50 text-green-700 border border-green-200"
                       : "bg-red-50 text-red-700 border border-red-200"
                   }`}
                 >
-                  {errorMessage.message}
+                  {state.message}
                 </div>
               )}
             </form>
@@ -216,6 +228,48 @@ export const FeedbackForm = ({
           </div>
         </div>
       </div>
+      {showSuccess && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+          <div className="relative bg-white rounded-2xl p-8 max-w-md mx-4 shadow-xl animate-fade-in">
+            <div className="text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 mb-4">
+                <svg
+                  className="h-6 w-6 text-green-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Заявка отправлена!
+              </h3>
+              <p className="text-sm text-gray-500">
+                Мы свяжемся с вами в ближайшее время
+              </p>
+              <div className="mt-4">
+                <button
+                  type="button"
+                  className="inline-flex justify-center rounded-md border border-transparent bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-colors"
+                  onClick={() => {
+                    setShowSuccess(false);
+                    if (onClose) onClose();
+                  }}
+                >
+                  Закрыть
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

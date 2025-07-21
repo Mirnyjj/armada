@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { sendMessage } from "./sendMessage";
 
 export const FormSchema = z.object({
   technique: z
@@ -73,23 +74,14 @@ export async function submittingForm(
   // Prepare data for insertion into the database
   const { technique, email, name, telephone, message } = validatedFields.data;
   console.log(technique, email, name, telephone, message);
-  // const amountInCents = amount * 100;
-  // const date = new Date().toISOString().split("T")[0];
+  const messageTelegramm = `Желаемая техника: ${technique}, Электронный адрес: ${email} Имя: ${name}, Телефон: ${telephone} Сообщение: ${message}`;
 
-  // // Insert data into the database
-  // try {
-  //   await sql`
-  //     INSERT INTO invoices (customer_id, amount, status, date)
-  //     VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
-  //   `;
-  // } catch (error) {
-  //   // If a database error occurs, return a more specific error.
-  //   return {
-  //     message: "Database Error: Failed to Create Invoice.",
-  //   };
-  // }
-
-  // Revalidate the cache for the invoices page and redirect the user.
-  // revalidatePath("/dashboard/invoices");
-  // redirect("/dashboard/invoices");
+  try {
+    await sendMessage(messageTelegramm);
+    return { message: "Заявка успешно отправлена!" };
+  } catch (error) {
+    return {
+      message: "Ошибка отправки сообщения",
+    };
+  }
 }

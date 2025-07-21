@@ -12,6 +12,7 @@ import { Button } from "../button/button";
 import { useState } from "react";
 import { FeedbackForm } from "../forms/feedback-form";
 import { useTechniqueHooks } from "@/app/lib/hooks/techniqueHooks";
+import Link from "next/link";
 
 export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -32,7 +33,10 @@ export const Header = () => {
       )}
       <div className="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center h-auto md:h-24 px-4 py-2 md:py-0">
         {/* Логотип и бургер */}
-        <div className="flex flex-row items-center w-full md:w-auto justify-between">
+        <Link
+          href="/"
+          className="flex flex-row items-center w-full md:w-auto justify-between"
+        >
           <Image
             src={logo}
             alt="Logo company Armada-holding picture"
@@ -51,7 +55,7 @@ export const Header = () => {
               <Bars3Icon className="h-8 w-8" />
             )}
           </button>
-        </div>
+        </Link>
         {/* Контент для десктопа */}
         <div className="hidden md:flex flex-row items-center gap-6 w-full md:w-auto justify-between">
           <span className="font-light text-lg text-[#FF5326] max-w-60 text-center">
