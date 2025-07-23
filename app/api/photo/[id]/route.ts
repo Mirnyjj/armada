@@ -8,19 +8,23 @@ import {
 } from "../actions";
 import { CarousePhotos } from "@/app/lib/definitions";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+interface RouteParams {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export async function GET(request: Request, params: RouteParams) {
   try {
-    if (!params.id) {
+    const id = (await params.params).id;
+    if (!id) {
       return NextResponse.json(
         { error: "Photo ID is required" },
         { status: 400 }
       );
     }
 
-    const photo = await getCarouselPhoto(params.id);
+    const photo = await getCarouselPhoto(id);
 
     if (!photo) {
       return NextResponse.json({ error: "Photo not found" }, { status: 404 });
@@ -39,12 +43,10 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: Request, params: RouteParams) {
+  const id = (await params.params).id;
   try {
-    if (!params.id) {
+    if (!id) {
       return NextResponse.json(
         { error: "Photo ID is required" },
         { status: 400 }
@@ -61,7 +63,7 @@ export async function PUT(
       );
     }
 
-    const updatedPhoto = await updateCarouselPhoto(params.id, data);
+    const updatedPhoto = await updateCarouselPhoto(id, data);
     return NextResponse.json(updatedPhoto, {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -75,19 +77,17 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: Request, params: RouteParams) {
   try {
-    if (!params.id) {
+    const id = (await params.params).id;
+    if (!id) {
       return NextResponse.json(
         { error: "Photo ID is required" },
         { status: 400 }
       );
     }
 
-    await deleteCarouselPhoto(params.id);
+    await deleteCarouselPhoto(id);
     return NextResponse.json(
       { success: true },
       {

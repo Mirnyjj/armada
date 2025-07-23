@@ -4,19 +4,24 @@ import { getProject } from "../queries";
 import { deleteProject, updateProject } from "../actions";
 import { CompletedProjects } from "@/app/lib/definitions";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+interface RouteParams {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export async function GET(request: Request, params: RouteParams) {
+  const { id } = await params.params;
+
   try {
-    if (!params.id) {
+    if (!id) {
       return NextResponse.json(
         { error: "Project ID is required" },
         { status: 400 }
       );
     }
 
-    const project = await getProject(params.id);
+    const project = await getProject(id);
 
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
@@ -35,12 +40,11 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: Request, params: RouteParams) {
+  const { id } = await params.params;
+
   try {
-    if (!params.id) {
+    if (!id) {
       return NextResponse.json(
         { error: "Project ID is required" },
         { status: 400 }
@@ -57,7 +61,7 @@ export async function PUT(
       );
     }
 
-    const updatedProject = await updateProject(params.id, data);
+    const updatedProject = await updateProject(id, data);
     return NextResponse.json(updatedProject, {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -71,19 +75,17 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: Request, params: RouteParams) {
   try {
-    if (!params.id) {
+    const { id } = await params.params;
+    if (!id) {
       return NextResponse.json(
         { error: "Project ID is required" },
         { status: 400 }
       );
     }
 
-    await deleteProject(params.id);
+    await deleteProject(id);
     return NextResponse.json(
       { success: true },
       {

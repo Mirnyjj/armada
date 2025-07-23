@@ -1,6 +1,5 @@
-import { Categories } from "@/app/lib/definitions";
 import { sql } from "@/app/lib/utils";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   try {
@@ -12,29 +11,90 @@ export async function GET() {
   }
 }
 
-export async function POST(categories: Omit<Categories, "id">) {
-  try {
-    const [newCategories] = await sql<Categories[]>`
-            INSERT INTO categories (photo_path, name, title, description, id)
-            VALUES (${categories.photo_path}, ${categories.name}, ${categories.title}, ${categories.description})
-            RETURNING *
-          `;
+interface Categories {
+  id: string;
+  photo_path: string;
+  name: string;
+  title: string;
+  description: string;
+}
 
-    return newCategories;
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  try {
+    // Получаем данные из тела запроса
+    const categoriesData: Omit<Categories, "id"> = await request.json();
+
+    // Валидация данных
+    if (!categoriesData.photo_path || !categoriesData.name) {
+      return NextResponse.json(
+        { error: "Необходимы photo_path и name" },
+        { status: 400 }
+      );
+    }
+
+    // Вставляем данные в БД
+    const [newCategories] = await sql<Categories[]>`
+      INSERT INTO categories (photo_path, name, title, description)
+      VALUES (${categoriesData.photo_path}, ${categoriesData.name}, 
+              ${categoriesData.title}, ${categoriesData.description})
+      RETURNING *
+    `;
+
+    // Возвращаем созданную категорию
+    return NextResponse.json(newCategories, { status: 201 });
   } catch (error) {
     console.error("Database Error:", error);
-    throw new Error("Failed to create categories.");
+    return NextResponse.json(
+      { error: "Ошибка при создании категории" },
+      { status: 500 }
+    );
   }
 }
 
-export async function PUT(id: string, categories: Categories) {
+interface RouteParams {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export async function PUT(
+  request: NextRequest,
+  params: RouteParams
+): Promise<NextResponse> {
   try {
-    const [updatedCategories] = await sql<
-      Categories[]
-    >`UPDATE categories SET photo_path = ${categories.photo_path} title = ${categories.title} description = ${categories.description} name = ${categories.name} WHERE id = ${id} RETURNING *`;
-    return updatedCategories;
+    // Получаем ID из параметров маршрута
+    const { id } = await params.params;
+
+    // Получаем данные из тела запроса
+    const categoriesData: Omit<Categories, "id"> = await request.json();
+
+    // Валидация данных
+    if (!id || !categoriesData.photo_path || !categoriesData.name) {
+      return NextResponse.json(
+        { error: "Необходимы ID, photo_path и name" },
+        { status: 400 }
+      );
+    }
+
+    // Обновляем данные в БД
+    const [updatedCategories] = await sql<Categories[]>`
+      UPDATE categories 
+      SET 
+        photo_path = ${categoriesData.photo_path},
+        title = ${categoriesData.title},
+        description = ${categoriesData.description},
+        name = ${categoriesData.name}
+      WHERE id = ${id}
+      RETURNING *
+    `;
+
+    // Возвращаем обновленную категорию
+    return NextResponse.json(updatedCategories, { status: 200 });
   } catch (error) {
     console.error("Database Error:", error);
-    throw new Error("Failed to update categories.");
+    return NextResponse.json(
+      { error: "Ошибка при обновлении категории" },
+      { status: 500 }
+    );
   }
 }
