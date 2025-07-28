@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   },
   description:
     "Аренда строительной и складской техники в Москве и Московской области. Широкий парк техники, гибкие условия аренды.",
+  verification: {
+    yandex: "365b66ad9ebdaca3",
+  },
   openGraph: {
     title: "Аренда спецтехники | Москва и Московская область",
     description:
