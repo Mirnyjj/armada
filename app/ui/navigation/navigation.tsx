@@ -8,7 +8,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 export const Navigation = () => {
   const pathname = usePathname();
-  console.log(pathname);
+
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (

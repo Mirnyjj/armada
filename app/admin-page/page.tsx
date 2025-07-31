@@ -50,7 +50,7 @@ export default function Page() {
   const [editingCategory, setEditingCategory] = useState<Categories | null>(
     null
   );
-  console.log(techniques, categories);
+  //   console.log(techniques, categories);
 
   if (isLoading && isTechniquesLoading) return <div>Loading...</div>;
   if (error || techniquesError)
