@@ -1,0 +1,171 @@
+/* Дополнительные стили для admin-page */
+
+/* Улучшенная адаптивность для таблиц */
+@media (max-width: 640px) {
+  .admin-table-responsive {
+    font-size: 0.875rem;
+  }
+  
+  .admin-table-responsive th,
+  .admin-table-responsive td {
+    padding: 0.5rem 0.25rem;
+  }
+}
+
+/* Анимации для карточек */
+.admin-card-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.admin-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Стили для прогресс-баров */
+.progress-bar {
+  transition: width 0.3s ease-in-out;
+}
+
+/* Улучшенные стили для кнопок */
+.admin-button {
+  transition: all 0.2s ease-in-out;
+}
+
+.admin-button:hover {
+  transform: translateY(-1px);
+}
+
+.admin-button:active {
+  transform: translateY(0);
+}
+
+/* Стили для мобильной навигации */
+@media (max-width: 768px) {
+  .admin-mobile-nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+  }
+}
+
+/* Стили для загрузки */
+.admin-loading {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}
+
+/* Стили для ошибок */
+.admin-error {
+  background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+  border: 1px solid #fca5a5;
+}
+
+/* Стили для успешных операций */
+.admin-success {
+  background: linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%);
+  border: 1px solid #86efac;
+}
+
+/* Улучшенные стили для модальных окон */
+.admin-modal {
+  backdrop-filter: blur(4px);
+}
+
+/* Стили для статистических карточек */
+.admin-stat-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease-in-out;
+}
+
+.admin-stat-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Стили для таблиц на мобильных устройствах */
+@media (max-width: 640px) {
+  .admin-table-mobile {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  .admin-table-mobile table {
+    min-width: 600px;
+  }
+}
+
+/* Стили для кнопок действий */
+.admin-action-button {
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.admin-action-button:hover {
+  transform: scale(1.05);
+}
+
+.admin-action-button:active {
+  transform: scale(0.95);
+}
+
+/* Стили для бейджей статуса */
+.admin-status-badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Стили для изображений в таблицах */
+.admin-table-image {
+  border-radius: 0.375rem;
+  object-fit: cover;
+  transition: transform 0.2s ease-in-out;
+}
+
+.admin-table-image:hover {
+  transform: scale(1.05);
+}
+
+/* Стили для заголовков */
+.admin-page-title {
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  color: white;
+  padding: 1rem 0;
+  margin-bottom: 1.5rem;
+}
+
+/* Стили для контейнера с максимальной шириной */
+.admin-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .admin-container {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .admin-container {
+    padding: 0 2rem;
+  }
+} 
