@@ -88,6 +88,7 @@ export type InvoiceForm = {
 };
 
 export type TechniqueType = {
+  [key: string]: string | number;
   id: string;
   photo_path: string;
   title: string;
@@ -101,6 +102,7 @@ export type TechniqueType = {
   price: number;
   id_categories: string;
   shaft_width: number;
+  status: "available" | "rented" | "maintenance";
 };
 export type CarousePhotos = {
   id: string;

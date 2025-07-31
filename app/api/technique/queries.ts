@@ -26,6 +26,7 @@ export async function fetchTechnique(
     limit?: number;
     offset?: number;
     id_categories?: string;
+    status?: string;
   } = {}
 ) {
   const {
@@ -52,6 +53,7 @@ export async function fetchTechnique(
     limit,
     offset,
     id_categories,
+    status,
   } = filters;
 
   // Белый список допустимых колонок для сортировки
@@ -69,6 +71,7 @@ export async function fetchTechnique(
     "price",
     "id_categories",
     "shaft_width",
+    "status",
   ];
 
   try {
@@ -82,6 +85,7 @@ export async function fetchTechnique(
                 ? sql`AND title ILIKE ${"%" + id_categories + "%"}`
                 : sql``
             }
+            ${status ? sql`AND title ILIKE ${"%" + status + "%"}` : sql``}
             ${
               minBucketVolume !== undefined
                 ? sql`AND bucket_volume >= ${minBucketVolume}`

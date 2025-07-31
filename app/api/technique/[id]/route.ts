@@ -1,4 +1,3 @@
-// app/api/projects/[id]/route.ts
 import { NextResponse } from "next/server";
 import { getTechniqueById } from "../queries";
 import { TechniqueType } from "@/app/lib/definitions";
@@ -16,16 +15,16 @@ export async function GET(
       );
     }
 
-    const project = await getTechniqueById(params.id);
+    const item = await getTechniqueById(params.id);
 
-    if (!project) {
+    if (!item) {
       return NextResponse.json(
         { error: "Technique not found" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(project, {
+    return NextResponse.json(item, {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
@@ -52,7 +51,6 @@ export async function PUT(
 
     const data: TechniqueType = await request.json();
 
-    // Базовая валидация данных
     if (!data || Object.keys(data).length === 0) {
       return NextResponse.json(
         { error: "No data provided for update" },
@@ -60,8 +58,8 @@ export async function PUT(
       );
     }
 
-    const updatedProject = await updateTechnique(params.id, data);
-    return NextResponse.json(updatedProject, {
+    const updatedItem = await updateTechnique(params.id, data);
+    return NextResponse.json(updatedItem, {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
@@ -103,7 +101,6 @@ export async function DELETE(
   }
 }
 
-// Обработка недопустимых методов
 export async function POST() {
   return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }
