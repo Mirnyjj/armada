@@ -3,19 +3,23 @@ import { getTechniqueById } from "../queries";
 import { TechniqueType } from "@/app/lib/definitions";
 import { deleteTechnique, updateTechnique } from "../actions";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+interface RouteParams {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export async function GET(request: Request, params: RouteParams) {
+  const { id } = await params.params;
   try {
-    if (!params.id) {
+    if (!id) {
       return NextResponse.json(
         { error: "Technique ID is required" },
         { status: 400 }
       );
     }
 
-    const item = await getTechniqueById(params.id);
+    const item = await getTechniqueById(id);
 
     if (!item) {
       return NextResponse.json(
@@ -37,12 +41,11 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: Request, params: RouteParams) {
+  const { id } = await params.params;
+
   try {
-    if (!params.id) {
+    if (!id) {
       return NextResponse.json(
         { error: "Technique ID is required" },
         { status: 400 }
@@ -58,7 +61,7 @@ export async function PUT(
       );
     }
 
-    const updatedItem = await updateTechnique(params.id, data);
+    const updatedItem = await updateTechnique(id, data);
     return NextResponse.json(updatedItem, {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -72,19 +75,18 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: Request, params: RouteParams) {
+  const { id } = await params.params;
+
   try {
-    if (!params.id) {
+    if (id) {
       return NextResponse.json(
         { error: "Technique ID is required" },
         { status: 400 }
       );
     }
 
-    await deleteTechnique(params.id);
+    await deleteTechnique(id);
     return NextResponse.json(
       { success: true },
       {

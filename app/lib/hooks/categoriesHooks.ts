@@ -17,7 +17,7 @@ async function fetchCategoriesClient() {
 }
 
 async function getCategoryClient(id: string) {
-  const res = await fetch(`/api/projects/${id}`);
+  const res = await fetch(`/api/categories/${id}`);
   if (!res.ok) throw new Error("Failed to fetch category");
   return res.json();
 }

@@ -1,4 +1,3 @@
-import { fetchCompletedProjects } from "./api/projects/queries";
 import { AboutTheCompany } from "./ui/about-the-company/about-the-company";
 import { BlackBlock } from "./ui/black-block/black-block";
 import { CarouselBG } from "./ui/carousels/carousel-bg/carousel-bg";

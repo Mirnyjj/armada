@@ -6,25 +6,26 @@ import {
 } from "../actions";
 import { CarousePhotos } from "@/app/lib/definitions";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+interface RouteParams {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export async function GET(request: Request, params: RouteParams) {
   try {
-    if (!params.id) {
+    const id = (await params.params).id;
+    if (!id) {
       return NextResponse.json(
         { error: "Photo ID is required" },
         { status: 400 }
       );
     }
 
-    const item = await getCarouselPhoto(params.id);
+    const item = await getCarouselPhoto(id);
 
     if (!item) {
-      return NextResponse.json(
-        { error: "Photo not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Photo not found" }, { status: 404 });
     }
 
     return NextResponse.json(item, {
@@ -40,12 +41,10 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: Request, params: RouteParams) {
+  const id = (await params.params).id;
   try {
-    if (!params.id) {
+    if (!id) {
       return NextResponse.json(
         { error: "Photo ID is required" },
         { status: 400 }
@@ -61,7 +60,7 @@ export async function PUT(
       );
     }
 
-    const updatedItem = await updateCarouselPhoto(params.id, data);
+    const updatedItem = await updateCarouselPhoto(id, data);
     return NextResponse.json(updatedItem, {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -75,19 +74,17 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: Request, params: RouteParams) {
   try {
-    if (!params.id) {
+    const id = (await params.params).id;
+    if (!id) {
       return NextResponse.json(
         { error: "Photo ID is required" },
         { status: 400 }
       );
     }
 
-    await deleteCarouselPhoto(params.id);
+    await deleteCarouselPhoto(id);
     return NextResponse.json(
       { success: true },
       {

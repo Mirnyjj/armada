@@ -1,6 +1,6 @@
 import { CarousePhotos } from "@/app/lib/definitions";
 import { sql } from "@/app/lib/utils";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   try {
@@ -12,9 +12,10 @@ export async function GET() {
   }
 }
 
-export async function POST(photo: Omit<CarousePhotos, "id" | "display_order">) {
+export async function POST(request: NextRequest): Promise<void | Response> {
   try {
     // Сначала получаем максимальный текущий display_order
+    const categoriesData: Omit<CarousePhotos, "id"> = await request.json();
     const maxOrderResult = await sql<{ max: number }[]>`
             SELECT MAX(display_order) as max FROM carousel_photos
           `;
@@ -25,25 +26,39 @@ export async function POST(photo: Omit<CarousePhotos, "id" | "display_order">) {
     // Создаём новую запись с автоматическим display_order
     const [newPhoto] = await sql<CarousePhotos[]>`
             INSERT INTO carousel_photos (photo_path, display_order, title, description)
-            VALUES (${photo.photo_path}, ${nextDisplayOrder}, ${photo.title}, ${photo.description})
+            VALUES (${categoriesData.photo_path}, ${nextDisplayOrder}, ${categoriesData.title}, ${categoriesData.description})
             RETURNING *
           `;
 
-    return newPhoto;
+    return NextResponse.json(newPhoto, { status: 201 });
   } catch (error) {
     console.error("Database Error:", error);
-    throw new Error("Failed to create carousel photo.");
+    return NextResponse.json(
+      { error: "Ошибка при создании фото" },
+      { status: 500 }
+    );
   }
 }
 
-export async function PUT(id: string, photo: CarousePhotos) {
+interface RouteParams {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export async function PUT(request: NextRequest, params: RouteParams) {
+  const { id } = await params.params;
+  const photo: Omit<CarousePhotos, "id"> = await request.json();
   try {
     const [updatedPhoto] = await sql<
       CarousePhotos[]
     >`UPDATE carousel_photos SET photo_path = ${photo.photo_path} title = ${photo.title} description = ${photo.description} WHERE id = ${id} RETURNING *`;
-    return updatedPhoto;
+    return NextResponse.json(updatedPhoto, { status: 200 });
   } catch (error) {
     console.error("Database Error:", error);
-    throw new Error("Failed to update photo.");
+    return NextResponse.json(
+      { error: "Ошибка при обновлении фото" },
+      { status: 500 }
+    );
   }
 }

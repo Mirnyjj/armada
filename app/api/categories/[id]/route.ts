@@ -1,37 +1,37 @@
-// app/api/projects/[id]/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { Categories } from "@/app/lib/definitions";
 import { deleteCategories, getCategories, updateCategories } from "../actions";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+interface RouteParams {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export async function GET(request: NextRequest, params: RouteParams) {
+  const { id } = await params.params;
+  if (!id) {
+    return NextResponse.json(
+      { error: "Category ID is required" },
+      { status: 400 }
+    );
+  }
   try {
-    if (!params.id) {
+    const category = await getCategories(id);
+    if (!category) {
       return NextResponse.json(
-        { error: "Photo ID is required" },
-        { status: 400 }
-      );
-    }
-
-    const categories = await getCategories(params.id);
-
-    if (!categories) {
-      return NextResponse.json(
-        { error: "Categories not found" },
+        { error: "Category not found" },
         { status: 404 }
       );
     }
-
-    return NextResponse.json(categories, {
+    return NextResponse.json(category, {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error) {
-    console.error("GET categories Error:", error);
+  } catch (err: any) {
+    console.error("Error fetching category:", err?.message); // Используем message для детализации ошибки
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
@@ -39,10 +39,12 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
-) {
+  params: RouteParams
+): Promise<NextResponse> {
   try {
-    if (!params.id) {
+    const { id } = await params.params;
+
+    if (!id) {
       return NextResponse.json(
         { error: "Categories ID is required" },
         { status: 400 }
@@ -59,7 +61,7 @@ export async function PUT(
       );
     }
 
-    const updatedCategories = await updateCategories(params.id, data);
+    const updatedCategories = await updateCategories(id, data);
     return NextResponse.json(updatedCategories, {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -75,17 +77,18 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
-) {
+  params: RouteParams
+): Promise<NextResponse> {
+  const { id } = await params.params;
   try {
-    if (!params.id) {
+    if (!id) {
       return NextResponse.json(
         { error: "Photo ID is required" },
         { status: 400 }
       );
     }
 
-    await deleteCategories(params.id);
+    await deleteCategories(id);
     return NextResponse.json(
       { success: true },
       {
@@ -103,6 +106,6 @@ export async function DELETE(
 }
 
 // Обработка недопустимых методов
-export async function POST() {
+export async function POST(): Promise<NextResponse> {
   return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }
