@@ -160,8 +160,8 @@ export async function fetchTechnique(
         ${minPrice !== undefined ? sql`AND price >= ${minPrice}` : sql``}
         ${maxPrice !== undefined ? sql`AND price <= ${maxPrice}` : sql``}
         ${
-          sortBy && validSortColumns.includes(sortBy)
-            ? sql`ORDER BY ${sql(sortBy)} ${
+          sortBy && validSortColumns.includes(String(sortBy))
+            ? sql`ORDER BY ${sql(String(sortBy))} ${
                 sortOrder === "desc" ? sql`DESC` : sql`ASC`
               }`
             : sql``
