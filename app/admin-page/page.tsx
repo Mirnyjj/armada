@@ -72,7 +72,7 @@ export default function Page() {
 
   if (isLoading && isTechniquesLoading && isProjectsLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-600">Загрузка данных...</p>
         </div>
@@ -680,7 +680,7 @@ export default function Page() {
               <div className="block sm:hidden">
                 <div className="space-y-4 p-4">
                   {isCategories?.map((category) => {
-                    const categoryEquipmentCount = equipment.filter(
+                    const categoryEquipmentCount = techniques?.filter(
                       (eq) => eq.id_categories === category.id
                     ).length;
                     return (
