@@ -145,6 +145,9 @@ export default function Page() {
     );
   };
 
+  const techniquesCount = (category: Categories) =>
+    techniques?.filter((eq) => eq.id_categories === category.id).length;
+
   const getStatusBadge = (status: TechniqueType["status"]) => {
     const statusConfig = {
       available: { label: "Доступна", variant: "default" as const },
@@ -680,9 +683,7 @@ export default function Page() {
               <div className="block sm:hidden">
                 <div className="space-y-4 p-4">
                   {isCategories?.map((category) => {
-                    const categoryEquipmentCount = techniques?.filter(
-                      (eq) => eq.id_categories === category.id
-                    ).length;
+                    const categoryEquipmentCount = techniquesCount(category);
                     return (
                       <div
                         key={category.id}
@@ -748,9 +749,7 @@ export default function Page() {
                   ]}
                 >
                   {isCategories?.map((category) => {
-                    const categoryEquipmentCount = equipment.filter(
-                      (eq) => eq.id_categories === category.id
-                    ).length;
+                    const categoryEquipmentCount = techniquesCount(category);
                     return (
                       <SimpleTableRow key={category.id}>
                         <SimpleTableCell>
