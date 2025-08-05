@@ -19,7 +19,7 @@ export function SimpleTabs({ tabs, children, defaultTab }: SimpleTabsProps) {
   return (
     <div className="space-y-6">
       {/* Навигация табов */}
-      <div className="bg-gray-100 rounded-xl p-1 grid grid-cols-3 gap-1">
+      <div className="bg-gray-100 rounded-xl p-1 grid grid-cols-4 gap-1">
         {tabs.map((tab) => (
           <button
             key={tab.id}

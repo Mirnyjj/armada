@@ -1,6 +1,10 @@
 "use client";
 import { useState } from "react";
-import { Categories, TechniqueType } from "../lib/definitions";
+import {
+  Categories,
+  CompletedProjects,
+  TechniqueType,
+} from "../lib/definitions";
 import { useTechniqueHooks } from "../lib/hooks/techniqueHooks";
 import { useCategoryHooks } from "../lib/hooks/categoriesHooks";
 import { SimpleBadge } from "../ui/simple/SimpleBadge";
@@ -11,6 +15,7 @@ import {
   EditIcon,
   PackageIcon,
   PlusIcon,
+  SettingsIcon,
   TrashIcon,
 } from "../ui/simple/SimpleIcons";
 import {
@@ -24,6 +29,8 @@ import { EquipmentForm } from "../ui/forms/EquipmentForm";
 import { CategoryForm } from "../ui/forms/CategoryForm";
 import { ImageWithFallback } from "../ui/figma/ImageWithFallback";
 import { SimpleTabs } from "../ui/simple/SimpleTabs";
+import { useProjectHooks } from "../lib/hooks/projectHooks";
+import { ProjectForm } from "../ui/forms/ProjectsForm";
 
 export default function Page() {
   const { useEntityList: useTechniqueList } = useTechniqueHooks();
@@ -32,37 +39,48 @@ export default function Page() {
     isLoading: isTechniquesLoading,
     error: techniquesError,
   } = useTechniqueList();
-  const { useEntityList } = useCategoryHooks();
-  const { data: isCategories, isLoading, error } = useEntityList();
+  const { useEntityList: useCategoriesList } = useCategoryHooks();
+  const { data: isCategories, isLoading, error } = useCategoriesList();
   const [equipment, setEquipment] = useState<TechniqueType[]>(
     techniques ? techniques : []
   );
+  const { useEntityList: useProjectsList } = useProjectHooks();
+  const {
+    data: isProjects,
+    isLoading: isProjectsLoading,
+    error: isProjectsError,
+  } = useProjectsList();
 
   const [categories, setCategories] = useState<Categories[]>(
     isCategories ? isCategories : []
+  );
+  const [projects, setProjects] = useState<CompletedProjects[]>(
+    isProjects ? isProjects : []
   );
 
   // Состояние модальных окон
   const [isEquipmentModalOpen, setIsEquipmentModalOpen] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [editingEquipment, setEditingEquipment] =
     useState<TechniqueType | null>(null);
   const [editingCategory, setEditingCategory] = useState<Categories | null>(
     null
   );
+  const [editingProject, setEditingProject] =
+    useState<CompletedProjects | null>(null);
 
-  if (isLoading && isTechniquesLoading) {
+  if (isLoading && isTechniquesLoading && isProjectsLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Загрузка данных...</p>
         </div>
       </div>
     );
   }
 
-  if (error || techniquesError) {
+  if (error || techniquesError || isProjectsError) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -71,14 +89,16 @@ export default function Page() {
             Ошибка загрузки
           </h2>
           <p className="text-gray-600">
-            {error?.message || techniquesError?.message}
+            {error?.message ||
+              techniquesError?.message ||
+              isProjectsError?.message}
           </p>
         </div>
       </div>
     );
   }
 
-  if (!isCategories && !techniques) {
+  if (!isCategories && !techniques && !isProjects) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -218,11 +238,48 @@ export default function Page() {
       setCategories((prev) => prev.filter((cat) => cat.id !== categoryId));
     }
   };
+  // CRUD операции для проектов
+  const handleSaveProjects = (
+    projectsData: Omit<CompletedProjects, "id"> & { id?: string }
+  ) => {
+    if (projectsData.id) {
+      // Обновление существующего проекта
+      setProjects((prev) =>
+        prev.map((cat) =>
+          cat.id === projectsData.id
+            ? { ...projectsData, id: projectsData.id }
+            : cat
+        )
+      );
+    } else {
+      // Создание нового проекта
+      const newProject = {
+        ...projectsData,
+        id: Date.now().toString(),
+      };
+      setProjects((prev) => [...prev, newProject]);
+    }
+
+    setIsProjectModalOpen(false);
+    setEditingProject(null);
+  };
+
+  const handleEditProject = (project: CompletedProjects) => {
+    setEditingProject(project);
+    setIsProjectModalOpen(true);
+  };
+
+  const handleDeleteProject = (projectId: string) => {
+    if (window.confirm("Вы уверены, что хотите удалить этот проект?")) {
+      setProjects((prev) => prev.filter((project) => project.id !== projectId));
+    }
+  };
 
   const tabs = [
     { id: "overview", label: "Обзор", icon: <BarChart3Icon /> },
     { id: "equipment", label: "Техника", icon: <PackageIcon /> },
     { id: "categories", label: "Категории", icon: <Building2Icon /> },
+    { id: "projects", label: "Проекты", icon: <SettingsIcon /> },
   ];
 
   return (
@@ -749,6 +806,146 @@ export default function Page() {
               </div>
             </div>
           </div>
+          {/* Проекты */}
+          <div>
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
+              <div className="p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                  <h3 className="text-lg font-semibold">
+                    Реализованные проекты
+                  </h3>
+                  <button
+                    onClick={() => setIsProjectModalOpen(true)}
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 hover:transform hover:scale-105 active:scale-95 w-full sm:w-auto"
+                  >
+                    <PlusIcon />
+                    <span className="hidden sm:inline">Добавить проект</span>
+                    <span className="sm:hidden">Добавить</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Мобильная версия таблицы проектов */}
+              <div className="block sm:hidden">
+                <div className="space-y-4 p-4">
+                  {isProjects?.map((project) => {
+                    return (
+                      <div
+                        key={project.id}
+                        className="bg-gray-50 rounded-lg p-4 space-y-3"
+                      >
+                        <div className="flex items-center gap-3">
+                          {project.photo_path ? (
+                            <ImageWithFallback
+                              src={project.photo_path}
+                              alt={project.title}
+                              className="h-16 w-16 object-cover rounded"
+                            />
+                          ) : (
+                            <div className="h-16 w-16 bg-gray-200 rounded flex items-center justify-center">
+                              <span className="text-gray-400 text-xs">
+                                Нет фото
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-900">
+                              {project.title}
+                            </h4>
+                            <p className="text-sm text-gray-600 line-clamp-2">
+                              {project.description}
+                            </p>
+                          </div>
+                          <div className="flex gap-1">
+                            <button
+                              onClick={() => handleEditProject(project)}
+                              className="p-2 text-blue-600 hover:text-blue-800 transition-colors"
+                              title="Редактировать"
+                            >
+                              <EditIcon />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteProject(project.id)}
+                              className="p-2 text-red-600 hover:text-red-800 transition-colors"
+                              title="Удалить"
+                            >
+                              <TrashIcon />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Десктопная версия таблицы категорий */}
+              <div className="hidden sm:block overflow-x-auto">
+                <SimpleTable
+                  headers={[
+                    "Изображение",
+                    "Название",
+                    "Описание",
+                    "Адрес",
+                    "Действия",
+                  ]}
+                >
+                  {isProjects?.map((project) => {
+                    return (
+                      <SimpleTableRow key={project.id}>
+                        <SimpleTableCell>
+                          {project.photo_path ? (
+                            <ImageWithFallback
+                              src={project.photo_path}
+                              alt={project.title}
+                              className="h-12 w-12 object-cover rounded hover:scale-105 transition-transform duration-200"
+                            />
+                          ) : (
+                            <div className="h-12 w-12 bg-gray-200 rounded flex items-center justify-center">
+                              <span className="text-gray-400 text-xs">
+                                Нет фото
+                              </span>
+                            </div>
+                          )}
+                        </SimpleTableCell>
+                        <SimpleTableCell className="font-medium">
+                          {project.title}
+                        </SimpleTableCell>
+                        <SimpleTableCell className="max-w-3xl">
+                          <div className="text-sm text-gray-600 line-clamp-2">
+                            {project.description}
+                          </div>
+                        </SimpleTableCell>
+                        <SimpleTableCell className="max-w-3xl">
+                          <div className="text-sm text-gray-600 line-clamp-2">
+                            {project.address}
+                          </div>
+                        </SimpleTableCell>
+                        <SimpleTableCell>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleEditProject(project)}
+                              className="p-1 text-blue-600 hover:text-blue-800 transition-colors hover:scale-105 active:scale-95"
+                              title="Редактировать"
+                            >
+                              <EditIcon />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteProject(project.id)}
+                              className="p-1 text-red-600 hover:text-red-800 transition-colors hover:scale-105 active:scale-95"
+                              title="Удалить"
+                            >
+                              <TrashIcon />
+                            </button>
+                          </div>
+                        </SimpleTableCell>
+                      </SimpleTableRow>
+                    );
+                  })}
+                </SimpleTable>
+              </div>
+            </div>
+          </div>
         </SimpleTabs>
       </div>
 
@@ -788,6 +985,23 @@ export default function Page() {
           onCancel={() => {
             setIsCategoryModalOpen(false);
             setEditingCategory(null);
+          }}
+        />
+      </Modal>
+      <Modal
+        isOpen={isProjectModalOpen}
+        onClose={() => {
+          setIsProjectModalOpen(false);
+          setEditingProject(null);
+        }}
+        title={editingProject ? "Редактировать проект" : "Добавить проект"}
+      >
+        <ProjectForm
+          project={editingProject || undefined}
+          onSave={handleSaveProjects}
+          onCancel={() => {
+            setIsProjectModalOpen(false);
+            setEditingProject(null);
           }}
         />
       </Modal>
