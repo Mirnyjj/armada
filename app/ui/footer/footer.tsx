@@ -1,15 +1,30 @@
+"use client";
 import Image from "next/image";
 import logo from "../../../public/logo.png";
-import { LINKS, TECHNIQUE_CATEGORY } from "@/app/lib/constants";
+import { LINKS } from "@/app/lib/constants";
 import Link from "next/link";
 import { Button } from "../button/button";
+import { FeedbackForm } from "../forms/feedback-form";
+import { useState } from "react";
+import { useTechniqueHooks } from "@/app/lib/hooks/techniqueHooks";
 
 export const Footer = () => {
+  const [isOpenForm, setIsOpenForm] = useState(false);
+  const { useEntityList: useTechniqueList } = useTechniqueHooks();
+  const { data: techniques } = useTechniqueList();
+  console.log(isOpenForm, techniques);
   return (
     <footer
       id="contacts"
       className="flex flex-col lg:flex-row bg-[#2d2d2d] min-h-[400px] lg:h-64 justify-center items-center w-full mt-auto px-4 py-8"
     >
+      {isOpenForm && techniques?.length !== 0 && (
+        <FeedbackForm
+          isOpen={isOpenForm}
+          onClose={() => setIsOpenForm(false)}
+          technique={techniques ? techniques : []}
+        />
+      )}
       <div className="w-full max-w-[1280px] flex flex-col lg:flex-row flex-wrap justify-between items-center lg:items-start gap-8 lg:gap-0">
         <div className="flex flex-col gap-3 items-center lg:items-start justify-center w-full lg:w-auto">
           <Link href="/">
@@ -44,7 +59,10 @@ export const Footer = () => {
         </div>
 
         <div className="flex flex-col items-center lg:items-start w-full lg:w-auto mt-4 lg:mt-0">
-          <Button className="rounded-none border-2 border-yellow-400 text-white px-4 py-2 w-full lg:w-auto">
+          <Button
+            onClick={() => setIsOpenForm(true)}
+            className="rounded-none border-2 border-yellow-400 text-white px-4 py-2 w-full lg:w-auto"
+          >
             Оставить заявку
           </Button>
         </div>

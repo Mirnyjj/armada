@@ -88,20 +88,20 @@ export type InvoiceForm = {
 };
 
 export type TechniqueType = {
-  [key: string]: string | number;
+  [key: string]: string | number | null;
   id: string;
   photo_path: string;
   title: string;
-  bucket_volume: number;
-  max_depth: number;
-  weight: number;
-  load_capacity_auto: number;
-  load_capacity_arrow: number;
-  boom_reach: number;
-  side_length: number;
-  price: number;
   id_categories: string;
-  shaft_width: number;
+  bucket_volume: number | string;
+  max_depth: number | string;
+  weight: number | string;
+  load_capacity_auto: number | string;
+  load_capacity_arrow: number | string;
+  boom_reach: number | string;
+  side_length: number | string;
+  price: number | string;
+  shaft_width: number | string;
   status: "available" | "rented" | "maintenance";
 };
 export type CarousePhotos = {

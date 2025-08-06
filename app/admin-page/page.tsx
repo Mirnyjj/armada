@@ -554,8 +554,8 @@ export default function Page() {
                         </div>
                       </div>
                       <div className="text-xs text-gray-500 space-y-1">
-                        {eq.weight > 0 && <div>Масса: {eq.weight} т</div>}
-                        {eq.price > 0 && (
+                        {+eq.weight > 0 && <div>Масса: {eq.weight} т</div>}
+                        {+eq.price > 0 && (
                           <div>Стоимость: {eq.price} ₽ в час</div>
                         )}
                         {Object.keys(eq).length > 5 && (
@@ -600,7 +600,7 @@ export default function Page() {
                         <div>
                           <div className="font-medium">{eq.title}</div>
                           <div className="text-xs text-gray-500 mt-1">
-                            {eq.weight > 0 && (
+                            {+eq.weight > 0 && (
                               <div className="flex justify-between">
                                 <p className="text-gray-600 min-h-[20px]">
                                   Масса:
@@ -609,7 +609,7 @@ export default function Page() {
                               </div>
                             )}
 
-                            {eq.price > 0 && (
+                            {+eq.price > 0 && (
                               <div className="flex justify-between">
                                 <p className="text-gray-600 min-h-[20px]">
                                   Стоимость:
@@ -958,7 +958,7 @@ export default function Page() {
         title={editingEquipment ? "Редактировать технику" : "Добавить технику"}
       >
         <EquipmentForm
-          equipment={editingEquipment || undefined}
+          equipment={editingEquipment || null}
           categories={isCategories || []}
           onSave={handleSaveEquipment}
           onCancel={() => {

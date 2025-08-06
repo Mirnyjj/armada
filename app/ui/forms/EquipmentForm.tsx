@@ -3,7 +3,7 @@ import { Categories, TechniqueType } from "@/app/lib/definitions";
 import React, { useState, useEffect } from "react";
 
 interface EquipmentFormProps {
-  equipment?: TechniqueType;
+  equipment: TechniqueType | null;
   categories: Categories[];
   onSave: (equipmentData: TechniqueType) => void;
   onCancel: () => void;
@@ -15,47 +15,67 @@ export function EquipmentForm({
   onSave,
   onCancel,
 }: EquipmentFormProps) {
-  const [formData, setFormData] = useState<TechniqueType>({
-    id: equipment?.id || "",
-    title: equipment?.title || "",
-    id_categories: equipment?.id_categories || "",
-    status: equipment?.status || ("available" as const),
-    photo_path: equipment?.photo_path || "",
-    bucket_volume: equipment?.bucket_volume || 0,
-    max_depth: equipment?.max_depth || 0,
-    weight: equipment?.weight || 0,
-    load_capacity_auto: equipment?.load_capacity_auto || 0,
-    load_capacity_arrow: equipment?.load_capacity_arrow || 0,
-    boom_reach: equipment?.boom_reach || 0,
-    side_length: equipment?.side_length || 0,
-    price: equipment?.price || 0,
-    shaft_width: equipment?.shaft_width || 0,
-  });
+  const [formData, setFormData] = useState<TechniqueType | null>(null);
+
+  useEffect(() => {
+    if (equipment && Object.keys(equipment).length !== 0) {
+      setFormData({
+        id: equipment.id,
+        title: equipment.title,
+        id_categories: equipment.id_categories,
+        status: equipment.status,
+        photo_path: equipment.photo_path,
+        price: equipment.price,
+        bucket_volume: equipment.bucket_volume,
+        max_depth: equipment.max_depth,
+        weight: equipment.weight,
+        load_capacity_auto: equipment.load_capacity_auto,
+        load_capacity_arrow: equipment.load_capacity_arrow,
+        boom_reach: equipment.boom_reach,
+        side_length: equipment.side_length,
+        shaft_width: equipment.shaft_width,
+      });
+    }
+  }, []);
 
   const [newSpecKey, setNewSpecKey] = useState("");
   const [newSpecValue, setNewSpecValue] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({
-      ...formData,
-      ...(equipment?.id && { id: equipment.id }),
-    });
+    if (formData) {
+      onSave({
+        ...formData,
+        ...(equipment?.id && { id: equipment.id }),
+      });
+    }
   };
 
-  const handleInputChange = (field: string, value: string | number) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const handleInputChange = (field: string, value: string | number | null) => {
+    setFormData((prev) => {
+      if (prev) {
+        return {
+          ...prev,
+          [field]: value || null,
+        };
+      } else {
+        return prev;
+      }
+    });
   };
 
   const addSpecification = () => {
     if (newSpecKey.trim() && newSpecValue.trim()) {
-      setFormData((prev) => ({
-        ...prev,
-        [newSpecKey.trim()]: newSpecValue.trim(),
-      }));
+      setFormData((prev) => {
+        if (prev) {
+          return {
+            ...prev,
+            [newSpecKey.trim()]: newSpecValue.trim(),
+          };
+        } else {
+          return prev;
+        }
+      });
       setNewSpecKey("");
       setNewSpecValue("");
     }
@@ -63,11 +83,14 @@ export function EquipmentForm({
 
   const removeSpecification = (key: string) => {
     setFormData((prev) => {
-      delete prev[key];
-      return { ...prev };
+      if (prev) {
+        delete prev[key];
+        return { ...prev };
+      }
+      return prev;
     });
   };
-
+  console.log(formData);
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -78,8 +101,8 @@ export function EquipmentForm({
           <input
             type="text"
             required
-            // value={formData.title}
-            onChange={(e) => handleInputChange("name", e.target.value)}
+            value={formData?.title || ""}
+            onChange={(e) => handleInputChange("title", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Например: Экскаватор CAT 320D"
           />
@@ -91,8 +114,8 @@ export function EquipmentForm({
           </label>
           <select
             required
-            value={formData.id_categories}
-            onChange={(e) => handleInputChange("categoryId", e.target.value)}
+            value={formData?.id_categories || ""}
+            onChange={(e) => handleInputChange("id_categories", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">Выберите категорию</option>
@@ -111,9 +134,12 @@ export function EquipmentForm({
           <input
             type="number"
             required
-            // value={formData.price}
+            value={formData?.price === null ? "" : formData?.price}
             onChange={(e) =>
-              handleInputChange("dailyRate", Number(e.target.value))
+              handleInputChange(
+                "price",
+                e.target.value === "" ? null : Number(e.target.value)
+              )
             }
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
@@ -125,7 +151,7 @@ export function EquipmentForm({
           </label>
           <select
             required
-            value={formData.status}
+            value={formData?.status}
             onChange={(e) => handleInputChange("status", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
@@ -142,8 +168,8 @@ export function EquipmentForm({
         </label>
         <input
           type="url"
-          value={formData.photo_path}
-          onChange={(e) => handleInputChange("image", e.target.value)}
+          value={formData?.photo_path || ""}
+          onChange={(e) => handleInputChange("photo_path", e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="https://example.com/image.jpg"
         />
@@ -155,36 +181,55 @@ export function EquipmentForm({
         </label>
 
         {/* Существующие характеристики */}
-        {Object.entries(formData).length > 0 && (
+        {formData && Object.entries(formData).length > 0 && (
           <div className="space-y-2 mb-4">
-            {Object.entries(formData).map(([key, value]) => (
-              <div
-                key={key}
-                className="flex items-center gap-2 p-3 bg-gray-50 rounded-md"
-              >
-                <span className="font-medium">{key}:</span>
-                <span>{value}</span>
-                <button
-                  type="button"
-                  onClick={() => removeSpecification(key)}
-                  className="ml-auto text-red-500 hover:text-red-700"
+            {Object.entries(formData)
+              .filter(
+                ([key, value]) =>
+                  key !== "title" &&
+                  key !== "id_categories" &&
+                  key !== "status" &&
+                  key !== "price" &&
+                  key !== "photo_path" &&
+                  key !== "id"
+              )
+              .map(([key, value]) => (
+                <div
+                  key={key}
+                  className="flex items-center gap-2 p-3 bg-gray-50 rounded-md"
                 >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {key}
+                  </label>
+                  <input
+                    type="number"
+                    name={key}
+                    id={key}
+                    value={value || ""}
+                    onChange={(e) => handleInputChange(key, e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeSpecification(key)}
+                    className="ml-auto text-red-500 hover:text-red-700"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-            ))}
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              ))}
           </div>
         )}
 
