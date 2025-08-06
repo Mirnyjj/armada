@@ -47,7 +47,7 @@ export const Card = ({
         </h5>
         <span className="w-full h-[1px] bg-yellow-400" />
         <div className="px-4 grid grid-cols-1 gap-y-2 text-sm min-h-[98px]">
-          {item.max_depth > 0 && (
+          {+item.max_depth > 0 && (
             <div className="flex justify-between">
               <p className="text-gray-600 min-h-[20px]">
                 Максимальная глубина копания:
@@ -55,19 +55,19 @@ export const Card = ({
               <p className="min-h-[20px]">{item.max_depth} м</p>
             </div>
           )}
-          {item.bucket_volume > 0 && (
+          {+item.bucket_volume > 0 && (
             <div className="flex justify-between">
               <p className="text-gray-600 min-h-[20px]">Объем ковша:</p>
               <p className="min-h-[20px]">{item.bucket_volume} м³</p>
             </div>
           )}
-          {item.weight > 0 && (
+          {+item.weight > 0 && (
             <div className="flex justify-between">
               <p className="text-gray-600 min-h-[20px]">Масса:</p>
               <p className="min-h-[20px]">{item.weight} т</p>
             </div>
           )}
-          {item.load_capacity_auto > 0 && (
+          {+item.load_capacity_auto > 0 && (
             <div className="flex justify-between">
               <p className="text-gray-600 min-h-[20px]">
                 Грузоподъемность авто:
@@ -75,7 +75,7 @@ export const Card = ({
               <p className="min-h-[20px]">{item.load_capacity_auto} т</p>
             </div>
           )}
-          {item.load_capacity_arrow > 0 && (
+          {+item.load_capacity_arrow > 0 && (
             <div className="flex justify-between">
               <p className="text-gray-600 min-h-[20px]">
                 Грузоподъемность стрелы:
@@ -83,19 +83,19 @@ export const Card = ({
               <p className="min-h-[20px]">{item.load_capacity_arrow} т</p>
             </div>
           )}
-          {item.boom_reach > 0 && (
+          {+item.boom_reach > 0 && (
             <div className="flex justify-between">
               <p className="text-gray-600 min-h-[20px]">Вылет стрелы:</p>
               <p className="min-h-[20px]">{item.boom_reach} м</p>
             </div>
           )}
-          {item.side_length > 0 && (
+          {+item.side_length > 0 && (
             <div className="flex justify-between">
               <p className="text-gray-600 min-h-[20px]">Длина бортов:</p>
               <p className="min-h-[20px]">{item.side_length} м</p>
             </div>
           )}
-          {item.shaft_width > 0 && (
+          {+item.shaft_width > 0 && (
             <div className="flex justify-between">
               <p className="text-gray-600 min-h-[20px]">
                 Ширина вибрационного вальца
@@ -103,7 +103,7 @@ export const Card = ({
               <p className="min-h-[20px]">{item.shaft_width} м</p>
             </div>
           )}
-          {item.price > 0 && (
+          {+item.price > 0 && (
             <div className="flex justify-between">
               <p className="text-gray-600 min-h-[20px]">Стоимость:</p>
               <p className="min-h-[20px]">{item.price} ₽ в час</p>
